@@ -1,11 +1,405 @@
 ---
-import Welcome from '../components/Welcome.astro';
-import Layout from '../layouts/Layout.astro';
-
-// Welcome to Astro! Wondering what to do next? Check out the Astro documentation at https://docs.astro.build
-// Don't want to use any of this? Delete everything in this file, the `assets`, `components`, and `layouts` directories, and start fresh.
 ---
 
-<Layout>
-	<Welcome />
-</Layout>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width" />
+    <title>Lucian｜在证明与梦之间</title>
+
+    <style>
+      :root {
+        --text: #1f2933;
+        --muted: #667085;
+        --light: #f8fafc;
+        --card: rgba(255, 255, 255, 0.78);
+        --border: rgba(148, 163, 184, 0.28);
+        --blue: #6b8fb3;
+        --ink: #111827;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      html {
+        scroll-behavior: smooth;
+      }
+
+      body {
+        margin: 0;
+        min-height: 100vh;
+        color: var(--text);
+        font-family: "Times New Roman", "SimSun", "宋体", serif;
+        background:
+          radial-gradient(circle at 20% 10%, rgba(191, 219, 254, 0.55), transparent 32%),
+          radial-gradient(circle at 80% 15%, rgba(221, 214, 254, 0.42), transparent 30%),
+          linear-gradient(180deg, #eef6fb 0%, #ffffff 42%, #f8fafc 100%);
+      }
+
+      a {
+        color: inherit;
+        text-decoration: none;
+      }
+
+      .page {
+        width: min(980px, calc(100% - 40px));
+        margin: 0 auto;
+      }
+
+      header {
+        height: 76px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+      }
+
+      .brand {
+        font-size: 22px;
+        font-weight: 700;
+        letter-spacing: 0.02em;
+      }
+
+      nav {
+        display: flex;
+        gap: 26px;
+        font-size: 17px;
+      }
+
+      nav a {
+        color: #334155;
+      }
+
+      nav a:hover {
+        color: #2563eb;
+      }
+
+      .hero {
+        text-align: center;
+        padding: 70px 0 82px;
+      }
+
+      
+	  .avatar-frame {
+  		width: 140px;
+  		height: 140px;
+  		margin: 0 auto 28px;
+		padding: 6px;
+		border-radius: 50%;
+		background: rgba(255, 255, 255, 0.7);
+		border: 1px solid rgba(255, 255, 255, 0.95);
+		box-shadow: 0 16px 40px rgba(30, 64, 175, 0.14);
+		}
+
+	  .avatar-img {
+		width: 100%;
+		height: 100%;
+		display: block;
+		border-radius: 50%;
+		object-fit: cover;
+		}
+
+      h1 {
+        margin: 0;
+        font-family: "Times New Roman", serif;
+        font-size: 48px;
+        letter-spacing: -0.02em;
+        color: var(--ink);
+      }
+
+      .name-cn {
+        margin-top: 8px;
+        font-family: "KaiTi", "楷体", "STKaiti", serif;
+        font-size: 22px;
+        color: #475569;
+      }
+
+      .motto {
+        max-width: 680px;
+        margin: 34px auto 0;
+        font-family: "KaiTi", "楷体", "STKaiti", serif;
+        font-size: 25px;
+        line-height: 1.9;
+        color: #334155;
+      }
+
+      .meta {
+        margin-top: 30px;
+        display: flex;
+        justify-content: center;
+        flex-wrap: wrap;
+        gap: 12px;
+      }
+
+      .pill {
+        padding: 8px 14px;
+        border-radius: 999px;
+        background: rgba(255, 255, 255, 0.68);
+        border: 1px solid var(--border);
+        font-size: 15px;
+        color: #475569;
+      }
+
+      section {
+        display: grid;
+        grid-template-columns: 170px 1fr;
+        gap: 46px;
+        padding: 48px 0;
+        border-top: 1px solid rgba(148, 163, 184, 0.25);
+      }
+
+      .section-title {
+        font-size: 24px;
+        font-weight: 700;
+        color: #111827;
+      }
+
+      .card {
+        background: var(--card);
+        border: 1px solid var(--border);
+        border-radius: 24px;
+        padding: 30px 34px;
+        box-shadow: 0 18px 50px rgba(15, 23, 42, 0.055);
+        backdrop-filter: blur(16px);
+      }
+
+      .prose p {
+        margin: 0 0 18px;
+        font-size: 18px;
+        line-height: 2.05;
+        color: #334155;
+      }
+
+      .prose p:last-child {
+        margin-bottom: 0;
+      }
+
+      .prose strong {
+        color: #1e3a8a;
+        font-weight: 700;
+      }
+
+      .list {
+        display: grid;
+        gap: 14px;
+      }
+
+      .item {
+        display: grid;
+        grid-template-columns: 110px 1fr;
+        gap: 22px;
+        align-items: center;
+        padding: 18px 22px;
+        border-radius: 18px;
+        background: rgba(255, 255, 255, 0.68);
+        border: 1px solid var(--border);
+        transition: transform 0.18s ease, box-shadow 0.18s ease;
+      }
+
+      .item:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 16px 38px rgba(15, 23, 42, 0.06);
+      }
+
+      .tag {
+        font-family: "Times New Roman", serif;
+        font-size: 15px;
+        color: #64748b;
+      }
+
+      .item-main h3 {
+        margin: 0 0 8px;
+        font-size: 19px;
+        color: #111827;
+      }
+
+      .item-main p {
+        margin: 0;
+        font-size: 16px;
+        line-height: 1.8;
+        color: #667085;
+      }
+
+      footer {
+        text-align: center;
+        padding: 52px 0 70px;
+        color: #64748b;
+        font-size: 15px;
+      }
+
+      @media (max-width: 760px) {
+        header {
+          height: auto;
+          padding: 26px 0;
+          flex-direction: column;
+          gap: 18px;
+        }
+
+        nav {
+          flex-wrap: wrap;
+          justify-content: center;
+          gap: 18px;
+        }
+
+        .hero {
+          padding: 48px 0 62px;
+        }
+
+        h1 {
+          font-size: 42px;
+        }
+
+        .motto {
+          font-size: 22px;
+        }
+
+        section {
+          grid-template-columns: 1fr;
+          gap: 20px;
+        }
+
+        .item {
+          grid-template-columns: 1fr;
+          gap: 8px;
+        }
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="page">
+      <header>
+        <a class="brand" href="/">Lucian's World</a>
+
+
+		
+		<nav>
+			<a href="#about">About</a>
+			<a href="#projects">Projects</a>
+			<a href="#courses">Courses</a>
+			<a href="#writings">Writings</a>
+			<a href="#music">Music</a>
+		</nav>
+      </header>
+
+      <main>
+        <div class="hero">
+          <div class="avatar-frame">
+  			<img src="/avatar.jpg" alt="Lucian 的头像" class="avatar-img" />
+		  </div>
+
+          <h1>Lucian</h1>
+          <div class="name-cn">在证明与梦之间</div>
+
+          <div class="motto">
+            在数学中寻找秩序，在文字中安放心事，<br />
+            在人工智能与心理学的交界，理解人如何与世界相遇
+          </div>
+
+          <div class="meta">
+            <span class="pill">北京大学数学科学学院</span>
+            <span class="pill">Mathematics</span>
+            <span class="pill">AI & Psychology</span>
+            <span class="pill">Writing</span>
+          </div>
+        </div>
+
+        <section id="about">
+          <div class="section-title">关于我</div>
+
+          <div class="card prose">
+            <p>
+              你好，我是 <strong>徐博达</strong>，由北京大学23级化院转专业至北京大学24级数院。
+            </p>
+
+			<p>
+              INFJ-2w3
+            </p>
+
+     
+            <p>
+              这个网站会用来存放我的项目、文章、课程笔记、研究想法，
+              以及一些尚未完成却仍在发光的念头。欢迎来到xbd的自留地！
+            </p>
+          </div>
+        </section>
+		
+
+
+
+
+
+		
+ <section id="projects">
+  <div class="section-title">Projects</div>
+
+  <div class="list">
+    
+  </div>
+</section>
+      <section id="courses">
+  <div class="section-title">Courses</div>
+
+  <div class="list">
+
+<a class="item" href="/files/courses/ode-solutions.pdf" target="_blank">
+      <div class="tag">ODE</div>
+      <div class="item-main">
+        <h3>常微分方程习题答案</h3>
+        <p>
+柳彬《常微分方程》书后题答案合集
+        </p>
+      </div>
+    </a>
+   
+  </div>
+</section>
+<section id="writings">
+  <div class="section-title">Writings</div>
+
+  <div class="list">
+  <a class="item" href="/files/writings/幻镜.pdf" target="_blank">
+      <div class="tag">Essay</div>
+      <div class="item-main">
+        <h3>幻镜</h3>
+        <p>
+心理学导论第一次课程作业，课程优秀论文。一篇关于转专业的日记对话体小说。
+        </p>
+      </div>
+    </a>
+
+
+
+  <a class="item" href="/files/writings/光影何生.pdf" target="_blank">
+      <div class="tag">Essay</div>
+      <div class="item-main">
+        <h3>光影何生</h3>
+        <p>
+心理学导论第二次课程作业，课程优秀论文。一篇关于心理学、自我、经验与成长的文章。光与影并非彼此抵消，
+          它们共同构成一个人看见世界的方式。
+        </p>
+      </div>
+    </a>
+
+
+
+  </div>
+</section>
+
+      <section id="music">
+  <div class="section-title">Music</div>
+
+  <div class="list">
+
+
+
+  </div>
+</section>
+      </main>
+
+      <footer>
+        © 2026 Lucian. 愿此处存放一些微光，也存放一些未完成的远方。
+      </footer>
+    </div>
+  </body>
+</html>
