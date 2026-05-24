@@ -211,6 +211,10 @@
         margin: 0 0 8px;
         font-size: 19px;
         color: #111827;
+        display: flex;
+        align-items: baseline;
+        justify-content: space-between;
+        gap: 14px;
       }
 
       .item-main p {
@@ -218,6 +222,13 @@
         font-size: 16px;
         line-height: 1.8;
         color: #667085;
+      }
+
+      .item-action {
+        color: #2563eb;
+        font-size: 14px;
+        font-weight: 400;
+        white-space: nowrap;
       }
 
       footer {
@@ -261,6 +272,15 @@
         .item {
           grid-template-columns: 1fr;
           gap: 8px;
+        }
+
+        .item-main h3 {
+          display: block;
+        }
+
+        .item-action {
+          display: inline-block;
+          margin-left: 10px;
         }
       }
     </style>
@@ -343,10 +363,10 @@
 
   <div class="list">
 
-<a class="item" href="/files/courses/ode-solutions.pdf" target="_blank">
+<a class="item" href="/courses/ode-solutions/">
       <div class="tag">ODE</div>
       <div class="item-main">
-        <h3>常微分方程习题答案</h3>
+        <h3>常微分方程习题答案 <span class="item-action">查看详情</span></h3>
         <p>
 柳彬《常微分方程》书后题答案合集
         </p>
@@ -359,10 +379,10 @@
   <div class="section-title">Writings</div>
 
   <div class="list">
-  <a class="item" href="/files/writings/幻镜.pdf" target="_blank">
+  <a class="item" href="/writings/huanjing/">
       <div class="tag">Essay</div>
       <div class="item-main">
-        <h3>幻镜</h3>
+        <h3>幻镜 <span class="item-action">查看详情</span></h3>
         <p>
 心理学导论第一次课程作业，课程优秀论文。一篇关于转专业的日记对话体小说。
         </p>
@@ -371,10 +391,10 @@
 
 
 
-  <a class="item" href="/files/writings/光影何生.pdf" target="_blank">
+  <a class="item" href="/writings/guangying-hesheng/">
       <div class="tag">Essay</div>
       <div class="item-main">
-        <h3>光影何生</h3>
+        <h3>光影何生 <span class="item-action">查看详情</span></h3>
         <p>
 心理学导论第二次课程作业，课程优秀论文。一篇关于心理学、自我、经验与成长的文章。光与影并非彼此抵消，
           它们共同构成一个人看见世界的方式。
