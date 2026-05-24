@@ -179,6 +179,43 @@
         font-weight: 700;
       }
 
+      .contact-list {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 14px;
+      }
+
+      .contact-item {
+        min-height: 118px;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        padding: 22px 24px;
+        border-radius: 18px;
+        background: rgba(255, 255, 255, 0.68);
+        border: 1px solid var(--border);
+        transition: transform 0.18s ease, box-shadow 0.18s ease;
+      }
+
+      .contact-item:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 16px 38px rgba(15, 23, 42, 0.06);
+      }
+
+      .contact-label {
+        color: #64748b;
+        font-size: 14px;
+        letter-spacing: 0.04em;
+        text-transform: uppercase;
+      }
+
+      .contact-value {
+        color: #111827;
+        font-size: 18px;
+        line-height: 1.55;
+        word-break: break-word;
+      }
+
       .list {
         display: grid;
         gap: 14px;
@@ -274,6 +311,10 @@
           gap: 8px;
         }
 
+        .contact-list {
+          grid-template-columns: 1fr;
+        }
+
         .item-main h3 {
           display: block;
         }
@@ -295,6 +336,7 @@
 		
 		<nav>
 			<a href="#about">About</a>
+			<a href="#contact">Contact</a>
 			<a href="#projects">Projects</a>
 			<a href="#courses">Courses</a>
 			<a href="#writings">Writings</a>
@@ -342,6 +384,27 @@
               这个网站会用来存放我的项目、文章、课程笔记、研究想法，
               以及一些尚未完成却仍在发光的念头。欢迎来到xbd的自留地！
             </p>
+          </div>
+        </section>
+
+        <section id="contact">
+          <div class="section-title">Contact</div>
+
+          <div class="contact-list">
+            <a class="contact-item" href="mailto:947216434@qq.com">
+              <span class="contact-label">Email</span>
+              <span class="contact-value">947216434@qq.com</span>
+            </a>
+
+            <div class="contact-item">
+              <span class="contact-label">公众号</span>
+              <span class="contact-value">零点碎梦瓶</span>
+            </div>
+
+            <div class="contact-item">
+              <span class="contact-label">知乎</span>
+              <span class="contact-value">荒糖</span>
+            </div>
           </div>
         </section>
 		
