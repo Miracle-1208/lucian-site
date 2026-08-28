@@ -1,0 +1,194 @@
+---
+const {
+  issueTerm,
+  eyebrow = "Comments",
+  title = "留言",
+  description = "昵称可以留空，也不需要登录。",
+} = Astro.props;
+
+const headingId = `comment-title-${issueTerm.replaceAll("/", "-") || "home"}`;
+---
+
+<section
+  class="comment-thread"
+  data-comment-thread
+  data-page-key={issueTerm}
+  aria-labelledby={headingId}
+>
+  <header class="comment-heading">
+    <div>
+      <p class="eyebrow">{eyebrow}</p>
+      <h2 id={headingId}>{title}</h2>
+      <p>{description}</p>
+    </div>
+    <span class="comment-count" data-comment-count aria-live="polite"></span>
+  </header>
+
+  <div class="comment-list" data-comment-list aria-live="polite">
+    <p class="comment-empty" data-comment-empty>正在读取留言…</p>
+  </div>
+
+  <form class="comment-form" data-comment-form>
+    <div class="comment-form-row">
+      <label>
+        <span>昵称</span>
+        <input name="nickname" maxlength="40" placeholder="可不填" autocomplete="nickname" />
+      </label>
+      <span class="comment-anonymous">不登录也可以留言</span>
+    </div>
+
+    <label class="comment-content-field">
+      <span>留言内容</span>
+      <textarea
+        name="content"
+        maxlength="1000"
+        rows="4"
+        required
+        placeholder="写下想说的话…"
+      ></textarea>
+    </label>
+
+    <label class="comment-honeypot" aria-hidden="true">
+      网址
+      <input name="website" tabindex="-1" autocomplete="off" />
+    </label>
+
+    <div class="comment-form-footer">
+      <span data-comment-status role="status"></span>
+      <button type="submit">发布留言</button>
+    </div>
+  </form>
+</section>
+
+<script>
+  type CommentRecord = {
+    id: string;
+    nickname: string | null;
+    content: string;
+    createdAt: string;
+  };
+
+  const makeComment = (comment: CommentRecord) => {
+    const article = document.createElement("article");
+    article.className = "comment-item";
+
+    const meta = document.createElement("header");
+    const nickname = document.createElement("strong");
+    const time = document.createElement("time");
+    const body = document.createElement("p");
+    const date = new Date(comment.createdAt);
+
+    nickname.textContent = comment.nickname || "匿名";
+    time.dateTime = comment.createdAt;
+    time.textContent = Number.isNaN(date.valueOf())
+      ? "刚刚"
+      : new Intl.DateTimeFormat("zh-CN", {
+          year: "numeric",
+          month: "2-digit",
+          day: "2-digit",
+          hour: "2-digit",
+          minute: "2-digit",
+        }).format(date);
+    body.textContent = comment.content;
+    meta.append(nickname, time);
+    article.append(meta, body);
+    return article;
+  };
+
+  document.querySelectorAll<HTMLElement>("[data-comment-thread]").forEach((root) => {
+    if (root.dataset.ready === "true") return;
+    root.dataset.ready = "true";
+
+    const page = root.dataset.pageKey || window.location.pathname;
+    const list = root.querySelector<HTMLElement>("[data-comment-list]");
+    const empty = root.querySelector<HTMLElement>("[data-comment-empty]");
+    const count = root.querySelector<HTMLElement>("[data-comment-count]");
+    const form = root.querySelector<HTMLFormElement>("[data-comment-form]");
+    const status = root.querySelector<HTMLElement>("[data-comment-status]");
+    const submit = form?.querySelector<HTMLButtonElement>("button[type='submit']");
+
+    const setStatus = (message: string, state: "idle" | "error" | "success" = "idle") => {
+      if (!status) return;
+      status.textContent = message;
+      status.dataset.state = state;
+    };
+
+    const renderComments = (comments: CommentRecord[]) => {
+      if (!list || !empty || !count) return;
+      list.replaceChildren();
+      count.textContent = comments.length ? `${comments.length} 条` : "";
+
+      if (!comments.length) {
+        empty.textContent = "还没有留言。";
+        list.append(empty);
+        return;
+      }
+
+      list.append(...comments.map(makeComment));
+    };
+
+    const loadComments = async () => {
+      try {
+        const response = await fetch(`/api/comments?page=${encodeURIComponent(page)}`, {
+          headers: { Accept: "application/json" },
+        });
+        if (!response.ok) throw new Error("comments unavailable");
+        const payload = await response.json();
+        renderComments(payload.comments ?? []);
+      } catch {
+        if (empty) {
+          empty.textContent = window.location.hostname === "127.0.0.1" || window.location.hostname === "localhost"
+            ? "本地预览不保存留言，发布后在这里显示。"
+            : "留言暂时无法加载。";
+        }
+        if (count) count.textContent = "";
+      }
+    };
+
+    form?.addEventListener("submit", async (event) => {
+      event.preventDefault();
+      if (!form || !submit) return;
+
+      const data = new FormData(form);
+      const content = String(data.get("content") ?? "").trim();
+      if (!content) {
+        setStatus("先写一点内容。", "error");
+        return;
+      }
+
+      submit.disabled = true;
+      setStatus("正在发布…");
+
+      try {
+        const response = await fetch("/api/comments", {
+          method: "POST",
+          headers: { "Content-Type": "application/json", Accept: "application/json" },
+          body: JSON.stringify({
+            page,
+            nickname: String(data.get("nickname") ?? ""),
+            content,
+            website: String(data.get("website") ?? ""),
+          }),
+        });
+        const payload = await response.json().catch(() => ({}));
+
+        if (!response.ok) {
+          throw new Error(payload.error || "留言没有发出去，请稍后再试。");
+        }
+
+        const currentItems = Array.from(list?.querySelectorAll(".comment-item") ?? []);
+        if (empty?.isConnected) empty.remove();
+        list?.append(makeComment(payload.comment));
+        if (count) count.textContent = `${currentItems.length + 1} 条`;
+        form.reset();
+        setStatus("已经留下了。", "success");
+      } catch (error) {
+        setStatus(error instanceof Error ? error.message : "留言没有发出去，请稍后再试。", "error");
+      } finally {
+        submit.disabled = false;
+      }
+    });
+
+    loadComments();
+  });
+</script>

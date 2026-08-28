@@ -1,15 +1,11 @@
 ---
 import DetailLayout from "../../layouts/DetailLayout.astro";
+import { getLibraryEntry } from "../../data/library";
+
+const entry = getLibraryEntry("ode-solutions");
 ---
 
-<DetailLayout
-  title="常微分方程习题答案"
-  section="Courses"
-  label="ODE"
-  description="柳彬《常微分方程》书后题答案合集。"
-  resourceHref="/files/courses/ode-solutions.pdf"
-  resourceLabel="打开 PDF"
->
+<DetailLayout {entry}>
   <section class="detail-section">
     <h2>README</h2>
     <p>

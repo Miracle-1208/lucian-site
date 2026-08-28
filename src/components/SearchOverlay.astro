@@ -1,0 +1,188 @@
+---
+import { searchIndex } from "../data/library";
+
+const serializedIndex = JSON.stringify(searchIndex).replaceAll("<", "\\u003c");
+---
+
+<dialog class="search-dialog" id="site-search" aria-labelledby="search-title">
+  <div class="search-panel">
+    <div class="search-heading">
+      <div>
+        <p class="eyebrow">Search the archive</p>
+        <h2 id="search-title">寻找一页微光</h2>
+      </div>
+      <button class="dialog-close" type="button" data-search-close aria-label="关闭搜索">×</button>
+    </div>
+
+    <label class="search-field">
+      <span aria-hidden="true">⌕</span>
+      <input
+        id="search-input"
+        type="search"
+        placeholder="搜索标题、简介、标签或文件名…"
+        autocomplete="off"
+      />
+      <kbd>ESC</kbd>
+    </label>
+
+    <div class="search-status" id="search-status" aria-live="polite"></div>
+    <div class="search-results" id="search-results" role="listbox" aria-label="搜索结果"></div>
+
+    <div class="search-empty" id="search-empty" hidden>
+      <span aria-hidden="true">∅</span>
+      <p>暂时没有找到这一页，试试更短的关键词。</p>
+    </div>
+  </div>
+</dialog>
+
+<script type="application/json" id="search-index" set:html={serializedIndex}></script>
+
+<script>
+  const dialog = document.querySelector<HTMLDialogElement>("#site-search");
+  const input = document.querySelector<HTMLInputElement>("#search-input");
+  const results = document.querySelector<HTMLElement>("#search-results");
+  const status = document.querySelector<HTMLElement>("#search-status");
+  const empty = document.querySelector<HTMLElement>("#search-empty");
+  const indexNode = document.querySelector<HTMLScriptElement>("#search-index");
+
+  type SearchItem = {
+    id: string;
+    href: string;
+    section: string;
+    tag: string;
+    title: string;
+    description: string;
+    fileName: string;
+    searchable: string;
+  };
+
+  const items: SearchItem[] = indexNode ? JSON.parse(indexNode.textContent || "[]") : [];
+  let activeIndex = -1;
+  let visibleItems: SearchItem[] = [];
+
+  const normalize = (value: string) =>
+    value.toLocaleLowerCase("zh-CN").replace(/[\s·•—_/-]+/g, " ").trim();
+
+  const scoreItem = (item: SearchItem, query: string) => {
+    const title = normalize(item.title);
+    const fileName = normalize(item.fileName);
+    const searchable = normalize(item.searchable);
+    const tokens = query.split(" ").filter(Boolean);
+
+    if (!tokens.every((token) => searchable.includes(token))) return 0;
+
+    let score = 0;
+
+    if (title === query) score += 120;
+    if (title.startsWith(query)) score += 70;
+    if (title.includes(query)) score += 50;
+    if (fileName.includes(query)) score += 35;
+    if (searchable.includes(query)) score += 15;
+    score += tokens.length * 8;
+
+    return score;
+  };
+
+  const setActiveResult = (next: number) => {
+    const links = Array.from(results?.querySelectorAll<HTMLAnchorElement>("a") ?? []);
+    if (!links.length) return;
+
+    activeIndex = (next + links.length) % links.length;
+    links.forEach((link, index) => link.toggleAttribute("data-active", index === activeIndex));
+    links[activeIndex]?.focus();
+  };
+
+  const makeResult = (item: SearchItem) => {
+    const link = document.createElement("a");
+    link.className = "search-result";
+    link.href = item.href;
+    link.role = "option";
+
+    const meta = document.createElement("span");
+    meta.className = "search-result-meta";
+    meta.textContent = `${item.section} · ${item.tag}`;
+
+    const title = document.createElement("strong");
+    title.textContent = item.title;
+
+    const description = document.createElement("span");
+    description.className = "search-result-description";
+    description.textContent = item.description;
+
+    const file = document.createElement("span");
+    file.className = "search-result-file";
+    file.textContent = item.fileName ? `文件 · ${item.fileName}` : "查看条目";
+
+    link.append(meta, title, description, file);
+    return link;
+  };
+
+  const render = () => {
+    if (!input || !results || !status || !empty) return;
+
+    const query = normalize(input.value);
+    visibleItems = query
+      ? items
+          .map((item) => ({ item, score: scoreItem(item, query) }))
+          .filter(({ score }) => score > 0)
+          .sort((a, b) => b.score - a.score)
+          .map(({ item }) => item)
+      : items;
+
+    results.replaceChildren(...visibleItems.map(makeResult));
+    empty.hidden = visibleItems.length > 0;
+    results.hidden = visibleItems.length === 0;
+    status.textContent = query
+      ? `找到 ${visibleItems.length} 个相关条目`
+      : `全部 ${visibleItems.length} 个条目`;
+    activeIndex = -1;
+  };
+
+  const openSearch = () => {
+    if (!dialog || !input) return;
+    if (!dialog.open) dialog.showModal();
+    input.value = "";
+    render();
+    requestAnimationFrame(() => input.focus());
+  };
+
+  const closeSearch = () => {
+    if (dialog?.open) dialog.close();
+  };
+
+  document.querySelectorAll("[data-search-open]").forEach((button) =>
+    button.addEventListener("click", openSearch),
+  );
+  document.querySelectorAll("[data-search-close]").forEach((button) =>
+    button.addEventListener("click", closeSearch),
+  );
+
+  input?.addEventListener("input", render);
+  dialog?.addEventListener("keydown", (event) => {
+    if (event.key === "ArrowDown") {
+      event.preventDefault();
+      setActiveResult(activeIndex + 1);
+    }
+    if (event.key === "ArrowUp") {
+      event.preventDefault();
+      setActiveResult(activeIndex - 1);
+    }
+  });
+
+  dialog?.addEventListener("click", (event) => {
+    if (event.target === dialog) closeSearch();
+  });
+
+  document.addEventListener("keydown", (event) => {
+    const target = event.target as HTMLElement | null;
+    const isTyping = target?.matches("input, textarea, select, [contenteditable='true']");
+
+    if ((event.metaKey || event.ctrlKey) && event.key.toLowerCase() === "k") {
+      event.preventDefault();
+      dialog?.open ? closeSearch() : openSearch();
+    } else if (event.key === "/" && !isTyping && !dialog?.open) {
+      event.preventDefault();
+      openSearch();
+    }
+  });
+</script>

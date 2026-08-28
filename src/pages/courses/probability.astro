@@ -1,15 +1,11 @@
 ---
 import DetailLayout from "../../layouts/DetailLayout.astro";
+import { getLibraryEntry } from "../../data/library";
+
+const entry = getLibraryEntry("probability");
 ---
 
-<DetailLayout
-  title="概率论"
-  section="Courses"
-  label="Probability"
-  description="概率论期末题与答案。"
-  resourceHref="/files/courses/概率论期末题与答案.pdf"
-  resourceLabel="打开 PDF"
->
+<DetailLayout {entry}>
   <section class="detail-section">
     <h2>README</h2>
     <p>

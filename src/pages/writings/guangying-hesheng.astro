@@ -1,15 +1,11 @@
 ---
 import DetailLayout from "../../layouts/DetailLayout.astro";
+import { getLibraryEntry } from "../../data/library";
+
+const entry = getLibraryEntry("guangying-hesheng");
 ---
 
-<DetailLayout
-  title="光影何生"
-  section="Writings"
-  label="Essay"
-  description="心理学导论第二次课程作业，课程优秀论文。一篇关于心理学、自我、经验与成长的文章。"
-  resourceHref="/files/writings/光影何生.pdf"
-  resourceLabel="打开 PDF"
->
+<DetailLayout {entry}>
   <section class="detail-section">
     <h2>README</h2>
     <p>

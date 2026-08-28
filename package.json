@@ -12,6 +12,11 @@
     "astro": "astro"
   },
   "dependencies": {
+    "@neondatabase/serverless": "^1.1.0",
     "astro": "^6.3.3"
+  },
+  "devDependencies": {
+    "@types/node": "^26.2.0",
+    "typescript": "^7.0.2"
   }
 }

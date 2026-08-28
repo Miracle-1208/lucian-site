@@ -1,0 +1,54 @@
+---
+import {
+  getEntriesBySection,
+  sectionMeta,
+  type LibrarySection,
+} from "../data/library";
+
+const { section } = Astro.props as { section: LibrarySection };
+const entries = getEntriesBySection(section);
+const meta = sectionMeta[section];
+---
+
+<section class="library-chapter" id={section} aria-labelledby={`${section}-title`}>
+  <div class="chapter-heading">
+    <p class="chapter-number">{String(Object.keys(sectionMeta).indexOf(section) + 1).padStart(2, "0")}</p>
+    <div>
+      <h2 id={`${section}-title`}>{meta.label}</h2>
+      <p>{meta.caption}</p>
+    </div>
+    {entries.length > 1 && (
+      <div class="shelf-controls" aria-label={`${meta.label} 翻页控制`}>
+        <button type="button" data-shelf-prev aria-label="向前翻一页">←</button>
+        <button type="button" data-shelf-next aria-label="向后翻一页">→</button>
+      </div>
+    )}
+  </div>
+
+  {entries.length > 0 ? (
+    <div class="folio-track" data-folio-track>
+      {entries.map((entry, index) => (
+        <a
+          class="folio-card"
+          href={entry.href}
+          style={`view-transition-name: ${entry.transitionName}`}
+          aria-label={`打开 ${entry.title}`}
+        >
+          <span class="folio-leaf" aria-hidden="true"></span>
+          <span class="folio-index">{String(index + 1).padStart(2, "0")}</span>
+          <span class="folio-tag">{entry.tag}</span>
+          <strong>{entry.title}</strong>
+          <span class="folio-description">{entry.description}</span>
+          <span class="folio-file">{entry.fileName ? `文件 · ${entry.fileName}` : "查看条目"}</span>
+          <span class="folio-open" aria-hidden="true">翻开这一页 <b>↗</b></span>
+        </a>
+      ))}
+      <div class="folio-spacer" aria-hidden="true"></div>
+    </div>
+  ) : (
+    <div class="empty-folio">
+      <span aria-hidden="true">＋</span>
+      <p>{meta.emptyText}</p>
+    </div>
+  )}
+</section>

@@ -1,0 +1,37 @@
+<section class="theme-dock" id="theme" aria-label="主题色调">
+  <div class="theme-dock-card">
+    <div class="theme-dock-copy">
+      <p class="section-kicker">Atmosphere</p>
+      <p class="theme-dock-title">选择色调</p>
+      <p>浅色与深色可随时切换，也可以慢慢转动色相，让页面落在你喜欢的光里。</p>
+    </div>
+
+    <div class="theme-dock-controls">
+      <div class="theme-mode-switch" role="group" aria-label="色调模式">
+        <button type="button" data-theme-mode="light">浅色调</button>
+        <button type="button" data-theme-mode="dark">深色调</button>
+      </div>
+
+      <div class="hue-control">
+        <button type="button" class="hue-toggle" data-hue-toggle aria-expanded="true" aria-controls="hue-panel">
+          调节色调
+        </button>
+        <div class="hue-panel" id="hue-panel">
+          <label class="hue-slider-label" for="hue-slider">
+            <span>色相</span>
+            <span data-hue-value>226°</span>
+          </label>
+          <input
+            class="hue-slider"
+            id="hue-slider"
+            type="range"
+            min="0"
+            max="360"
+            value="226"
+            data-hue-slider
+          />
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

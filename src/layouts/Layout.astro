@@ -1,23 +1,148 @@
-<!doctype html>
-<html lang="en">
-	<head>
-		<meta charset="UTF-8" />
-		<meta name="viewport" content="width=device-width" />
-		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-		<link rel="icon" href="/favicon.ico" />
-		<meta name="generator" content={Astro.generator} />
-		<title>Astro Basics</title>
-	</head>
-	<body>
-		<slot />
-	</body>
-</html>
+---
+import SiteHeader from "../components/SiteHeader.astro";
+import SearchOverlay from "../components/SearchOverlay.astro";
+import "../styles/global.css";
 
-<style>
-	html,
-	body {
-		margin: 0;
-		width: 100%;
-		height: 100%;
-	}
-</style>
+const {
+  title = "Lucian｜在证明与梦之间",
+  description = "Lucian 的个人主页：数学、人工智能、心理学、写作，以及一些尚未完成却仍在发光的念头。",
+  home = false,
+} = Astro.props;
+
+const canonicalUrl = new URL(Astro.url.pathname, "https://lucian.xbd.ink").toString();
+const socialImage = home ? "https://lucian.xbd.ink/og.png" : undefined;
+---
+
+<!doctype html>
+<html lang="zh-CN" data-theme="light">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content={description} />
+    <meta name="theme-color" content="#e8eef8" />
+    <script is:inline>
+      (function () {
+        try {
+          var stored = JSON.parse(localStorage.getItem("lucian-theme") || "{}");
+          var hue = Number(stored.hue);
+          var mode = stored.mode === "dark" ? "dark" : "light";
+          document.documentElement.dataset.theme = mode;
+          if (Number.isFinite(hue)) {
+            document.documentElement.style.setProperty("--hue", String(hue));
+          }
+        } catch (error) {
+          document.documentElement.dataset.theme = "light";
+        }
+      })();
+    </script>
+    <link rel="canonical" href={canonicalUrl} />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonicalUrl} />
+    {socialImage && <meta property="og:image" content={socialImage} />}
+    {socialImage && <meta property="og:image:width" content="1729" />}
+    {socialImage && <meta property="og:image:height" content="910" />}
+    <meta name="twitter:card" content={socialImage ? "summary_large_image" : "summary"} />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    {socialImage && <meta name="twitter:image" content={socialImage} />}
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="icon" href="/favicon.ico" />
+    <title>{title}</title>
+  </head>
+
+  <body>
+    <div class="ambient-orb ambient-orb-left" aria-hidden="true"></div>
+    <div class="ambient-orb ambient-orb-right" aria-hidden="true"></div>
+
+    <div class="site-shell">
+      <SiteHeader {home} />
+      <slot />
+
+      <footer class="site-footer">
+        <span>© 2026 Lucian</span>
+        <span class="footer-dot" aria-hidden="true"></span>
+        <span>愿此处存放一些微光，也存放一些未完成的远方。</span>
+      </footer>
+    </div>
+
+    <SearchOverlay />
+
+    <script>
+      const THEME_KEY = "lucian-theme";
+      const DEFAULT_HUE = 226;
+
+      const readTheme = () => {
+        try {
+          return JSON.parse(localStorage.getItem(THEME_KEY) || "{}") as { hue?: number; mode?: string };
+        } catch {
+          return {};
+        }
+      };
+
+      const applyTheme = (mode: "light" | "dark", hue: number) => {
+        const root = document.documentElement;
+        root.dataset.theme = mode;
+        root.style.setProperty("--hue", String(hue));
+        const themeColor = document.querySelector('meta[name="theme-color"]');
+        themeColor?.setAttribute("content", mode === "dark" ? "#0d121c" : "#e8eef8");
+        localStorage.setItem(THEME_KEY, JSON.stringify({ mode, hue }));
+
+        document.querySelectorAll<HTMLButtonElement>("[data-theme-mode]").forEach((button) => {
+          button.setAttribute("aria-pressed", String(button.dataset.themeMode === mode));
+        });
+
+        const slider = document.querySelector<HTMLInputElement>("[data-hue-slider]");
+        const hueValue = document.querySelector("[data-hue-value]");
+        if (slider) slider.value = String(hue);
+        if (hueValue) hueValue.textContent = `${hue}°`;
+      };
+
+      const current = readTheme();
+      applyTheme(current.mode === "dark" ? "dark" : "light", Number.isFinite(Number(current.hue)) ? Number(current.hue) : DEFAULT_HUE);
+
+      document.querySelectorAll<HTMLButtonElement>("[data-theme-mode]").forEach((button) => {
+        button.addEventListener("click", () => {
+          const next = readTheme();
+          applyTheme(button.dataset.themeMode === "dark" ? "dark" : "light", Number(next.hue) || DEFAULT_HUE);
+        });
+      });
+
+      const hueSlider = document.querySelector<HTMLInputElement>("[data-hue-slider]");
+      hueSlider?.addEventListener("input", () => {
+        const next = readTheme();
+        applyTheme(next.mode === "dark" ? "dark" : "light", Number(hueSlider.value));
+      });
+
+      const hueToggle = document.querySelector<HTMLButtonElement>("[data-hue-toggle]");
+      const huePanel = document.querySelector<HTMLElement>("#hue-panel");
+      hueToggle?.addEventListener("click", () => {
+        const expanded = hueToggle.getAttribute("aria-expanded") === "true";
+        hueToggle.setAttribute("aria-expanded", String(!expanded));
+        huePanel?.toggleAttribute("data-collapsed", expanded);
+      });
+
+      document.querySelectorAll<HTMLElement>(".library-chapter").forEach((chapter) => {
+        const track = chapter.querySelector<HTMLElement>("[data-folio-track]");
+        const previous = chapter.querySelector<HTMLButtonElement>("[data-shelf-prev]");
+        const next = chapter.querySelector<HTMLButtonElement>("[data-shelf-next]");
+        if (!track) return;
+
+        const turnPage = (direction: number) => {
+          const card = track.querySelector<HTMLElement>(".folio-card");
+          const distance = card ? card.offsetWidth + 18 : track.clientWidth * 0.8;
+          track.scrollBy({ left: distance * direction, behavior: "smooth" });
+        };
+
+        previous?.addEventListener("click", () => turnPage(-1));
+        next?.addEventListener("click", () => turnPage(1));
+      });
+
+      const header = document.querySelector<HTMLElement>("[data-site-header]");
+      const updateHeader = () => header?.toggleAttribute("data-scrolled", window.scrollY > 12);
+      updateHeader();
+      window.addEventListener("scroll", updateHeader, { passive: true });
+    </script>
+  </body>
+</html>

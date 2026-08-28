@@ -1,15 +1,11 @@
 ---
 import DetailLayout from "../../layouts/DetailLayout.astro";
+import { getLibraryEntry } from "../../data/library";
+
+const entry = getLibraryEntry("huanjing");
 ---
 
-<DetailLayout
-  title="幻镜"
-  section="Writings"
-  label="Essay"
-  description="心理学导论第一次课程作业，课程优秀论文。一篇关于转专业的日记对话体小说。"
-  resourceHref="/files/writings/幻镜.pdf"
-  resourceLabel="打开 PDF"
->
+<DetailLayout {entry}>
   <section class="detail-section">
     <h2>README</h2>
     <p>
