@@ -44,7 +44,7 @@ export const libraryEntries: LibraryEntry[] = [
     section: "courses",
     sectionLabel: "Courses",
     tag: "ODE",
-    title: "常微分方程习题答案",
+    title: "常微分方程",
     description:
       "柳彬《常微分方程》书后题答案合集，也收录了部分课程拓展题，用于复习、查漏补缺与对照推导。",
     fileName: "ode-solutions.pdf",
@@ -66,6 +66,21 @@ export const libraryEntries: LibraryEntry[] = [
     resourceLabel: "打开 PDF",
     keywords: ["概率论", "Probability", "期末题", "答案", "复习", "课程资料"],
     transitionName: "folio-probability",
+  },
+  {
+    id: "abstract-algebra",
+    href: "/courses/abstract-algebra/",
+    section: "courses",
+    sectionLabel: "Courses",
+    tag: "Algebra",
+    title: "抽象代数",
+    description:
+      "冯荣权《代数学三》书后题答案合集，是北大抽代课教材答案",
+    fileName: "抽象代数习题答案.pdf",
+    resourceHref: "/files/courses/抽象代数习题答案.pdf",
+    resourceLabel: "打开 PDF",
+    keywords: ["抽象代数", "代数学三", "冯荣权", "Algebra", "习题", "答案", "群论", "Sylow", "Jordan-Hölder", "课程资料"],
+    transitionName: "folio-abstract-algebra",
   },
   {
     id: "huanjing",

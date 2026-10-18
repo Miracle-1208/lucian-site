@@ -1,0 +1,33 @@
+---
+import DetailLayout from "../../layouts/DetailLayout.astro";
+import { getLibraryEntry } from "../../data/library";
+
+const entry = getLibraryEntry("abstract-algebra");
+---
+
+<DetailLayout {entry}>
+  <section class="detail-section">
+    <h2>README</h2>
+    <p>
+      这是冯荣权老师《代数学三》学习过程中整理的书后题答案，涵盖群论、Sylow 定理、Jordan–Hölder 定理等内容。整理成册主要是为了复习、查漏补缺和对照推导思路，如果它刚好也能帮到你，那就再好不过了。
+    </p>
+  </section>
+
+  <section class="detail-section">
+    <h2>文件信息</h2>
+    <ul class="meta-list">
+      <li>
+        <strong>类型</strong>
+        <span>课程资料 / 习题答案</span>
+      </li>
+      <li>
+        <strong>课程</strong>
+        <span>代数学三（抽象代数）</span>
+      </li>
+      <li>
+        <strong>文件</strong>
+        <span>抽象代数习题答案.pdf</span>
+      </li>
+    </ul>
+  </section>
+</DetailLayout>
