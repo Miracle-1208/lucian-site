@@ -15,7 +15,6 @@ const meta = sectionMeta[section];
     <p class="chapter-number">{String(Object.keys(sectionMeta).indexOf(section) + 1).padStart(2, "0")}</p>
     <div>
       <h2 id={`${section}-title`}>{meta.label}</h2>
-      <p>{meta.caption}</p>
     </div>
     {entries.length > 1 && (
       <div class="shelf-controls" aria-label={`${meta.label} 翻页控制`}>

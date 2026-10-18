@@ -17,26 +17,22 @@ export type LibraryEntry = {
 
 export const sectionMeta: Record<
   LibrarySection,
-  { label: string; caption: string; emptyText: string }
+  { label: string; emptyText: string }
 > = {
   projects: {
     label: "Projects",
-    caption: "实践、研究与尚在生长的想法",
     emptyText: "这一章还是空白，等待一个值得被做出来的念头。",
   },
   courses: {
     label: "Courses",
-    caption: "推导、题解与学习过程中留下的路标",
     emptyText: "课程资料正在整理中。",
   },
   writings: {
     label: "Writings",
-    caption: "文字是经验被重新看见的方式",
     emptyText: "下一篇文字还在路上。",
   },
   music: {
     label: "Music",
-    caption: "旋律、片段与偶然被记住的声音",
     emptyText: "这一页暂时留给沉默。",
   },
 };

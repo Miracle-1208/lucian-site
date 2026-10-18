@@ -161,7 +161,6 @@ a.contact-item:hover { transform: translateY(-3px); border-color: var(--line-str
 .chapter-heading { position: relative; align-self: stretch; }
 .chapter-number { margin: 0 0 28px; color: #9aa6b4; font-size: 11px; letter-spacing: .15em; }
 .chapter-heading h2 { margin: 0; color: var(--ink); font-size: 28px; font-weight: 500; letter-spacing: -.025em; }
-.chapter-heading > div > p { margin: 11px 0 0; color: #788697; font-size: 14px; line-height: 1.65; }
 .shelf-controls { position: absolute; bottom: 0; left: 0; display: flex; gap: 7px; }
 .shelf-controls button { display: grid; width: 38px; height: 34px; cursor: pointer; place-items: center; border: 1px solid var(--line); border-radius: 11px; color: #5f7185; background: rgba(255,255,255,.55); transition: transform .16s ease, background-color .16s ease; }
 .shelf-controls button:hover { transform: translateY(-2px); background: rgba(255,255,255,.9); }
