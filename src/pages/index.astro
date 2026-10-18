@@ -7,20 +7,14 @@ import Layout from "../layouts/Layout.astro";
 
 <Layout home>
   <main>
-    <section class="home-hero" aria-labelledby="hero-title">
+    <section class="home-hero" aria-label="Lucian">
+      <canvas class="hero-fireworks" aria-hidden="true"></canvas>
       <div class="hero-inner">
         <div class="avatar-frame">
           <img src="/avatar.jpg" alt="Lucian 的头像" class="avatar-img" />
         </div>
 
         <p class="eyebrow">A personal archive</p>
-        <h1 id="hero-title">Lucian</h1>
-        <div class="name-cn">在证明与梦之间</div>
-
-        <p class="motto">
-          在数学中寻找秩序，在文字中安放心事，<br />
-          在人工智能与心理学的交界，理解人如何与世界相遇
-        </p>
 
         <div class="profile-meta" aria-label="个人关键词">
           <span>INFJ</span>
@@ -34,10 +28,7 @@ import Layout from "../layouts/Layout.astro";
       <a class="scroll-cue" href="#about">Explore</a>
     </section>
 
-    <section class="content-section" id="about" aria-labelledby="about-title">
-      <p class="section-kicker">About me</p>
-      <h2 class="section-heading" id="about-title">这里可以是花园、可以是大海、也可以是星空之外。</h2>
-
+    <section class="content-section" id="about" aria-label="About me">
       <div class="about-grid">
         <div class="paper-card about-prose">
           <p>
@@ -59,11 +50,7 @@ import Layout from "../layouts/Layout.astro";
             </div>
             <div>
               <dt>Field</dt>
-              <dd>Mathematics</dd>
-            </div>
-            <div>
-              <dt>Somewhere</dt>
-              <dd>月光与潮汐之间</dd>
+              <dd>Mathematics · Psychology · Artificial Intelligence</dd>
             </div>
           </dl>
         </aside>
@@ -104,3 +91,311 @@ import Layout from "../layouts/Layout.astro";
     <ThemeDock />
   </main>
 </Layout>
+
+<script>
+  const hero = document.querySelector<HTMLElement>(".home-hero");
+  const canvas = hero?.querySelector<HTMLCanvasElement>(".hero-fireworks");
+  const cue = hero?.querySelector<HTMLElement>(".scroll-cue");
+  const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
+
+  if (hero && canvas && cue) {
+    const context = canvas.getContext("2d");
+
+    if (context) {
+      type Color = { h: number; s: number; l: number };
+      type Rocket = {
+        x: number;
+        y: number;
+        px: number;
+        py: number;
+        vx: number;
+        vy: number;
+        targetY: number;
+        palette: Color[];
+      };
+      type Spark = {
+        x: number;
+        y: number;
+        vx: number;
+        vy: number;
+        life: number;
+        maxLife: number;
+        size: number;
+        color: Color;
+        gravity: number;
+        drag: number;
+      };
+      type Flash = {
+        x: number;
+        y: number;
+        life: number;
+        maxLife: number;
+        radius: number;
+        color: Color;
+      };
+
+      const rockets: Rocket[] = [];
+      const sparks: Spark[] = [];
+      const flashes: Flash[] = [];
+      const maxSparks = 520;
+      let frame = 0;
+      let lastTime = 0;
+      let width = 0;
+      let height = 0;
+
+      const random = (min: number, max: number) => min + Math.random() * (max - min);
+      const clamp = (value: number, min: number, max: number) => Math.min(max, Math.max(min, value));
+
+      function resize() {
+        const rect = hero.getBoundingClientRect();
+        const dpr = Math.min(window.devicePixelRatio || 1, 2);
+        width = rect.width;
+        height = rect.height;
+        canvas!.width = Math.round(width * dpr);
+        canvas!.height = Math.round(height * dpr);
+        context!.setTransform(dpr, 0, 0, dpr, 0, 0);
+      }
+
+      resize();
+      new ResizeObserver(resize).observe(hero);
+
+      function hsl(color: Color, alpha = 1) {
+        return `hsla(${color.h}, ${color.s}%, ${color.l}%, ${alpha})`;
+      }
+
+      function readPalette(): Color[] {
+        const styles = getComputedStyle(document.documentElement);
+        const hue = Number.parseFloat(styles.getPropertyValue("--hue")) || 226;
+        const shift = Number.parseFloat(styles.getPropertyValue("--hue-shift")) || 28;
+        const dark = document.documentElement.dataset.theme === "dark";
+
+        return [
+          { h: hue, s: dark ? 72 : 82, l: dark ? 76 : 56 },
+          { h: (hue + shift) % 360, s: dark ? 68 : 74, l: dark ? 80 : 62 },
+          { h: hue, s: dark ? 50 : 65, l: dark ? 92 : 74 },
+        ];
+      }
+
+      function launchPoint() {
+        const heroRect = hero!.getBoundingClientRect();
+        const cueRect = cue!.getBoundingClientRect();
+        return {
+          x: cueRect.left - heroRect.left + cueRect.width / 2,
+          y: cueRect.bottom - heroRect.top - 2,
+        };
+      }
+
+      function addSpark(spark: Spark) {
+        if (sparks.length >= maxSparks) sparks.shift();
+        sparks.push(spark);
+      }
+
+      function explode(x: number, y: number, palette: Color[]) {
+        const count = Math.round(random(32, 42));
+
+        for (let i = 0; i < count; i += 1) {
+          const angle = Math.random() * Math.PI * 2;
+          const speed = random(0.8, 3.8) * (i % 6 === 0 ? 0.62 : 1);
+          const color = Math.random() < 0.62 ? palette[0] : Math.random() < 0.55 ? palette[1] : palette[2];
+          const maxLife = random(36, 62);
+          addSpark({
+            x,
+            y,
+            vx: Math.cos(angle) * speed,
+            vy: Math.sin(angle) * speed,
+            life: maxLife,
+            maxLife,
+            size: random(1.2, 2.3),
+            color,
+            gravity: 0.055,
+            drag: 0.972,
+          });
+        }
+
+        for (let i = 0; i < 8; i += 1) {
+          const angle = Math.random() * Math.PI * 2;
+          const speed = random(0.2, 0.9);
+          const maxLife = random(22, 36);
+          addSpark({
+            x,
+            y,
+            vx: Math.cos(angle) * speed,
+            vy: Math.sin(angle) * speed,
+            life: maxLife,
+            maxLife,
+            size: 1.3,
+            color: palette[2],
+            gravity: 0.02,
+            drag: 0.985,
+          });
+        }
+
+        flashes.push({ x, y, life: 16, maxLife: 16, radius: random(36, 52), color: palette[0] });
+      }
+
+      function launch(lean: number) {
+        const palette = readPalette();
+        const origin = launchPoint();
+        const reach = Math.min(random(105, 190), height * 0.27);
+
+        rockets.push({
+          x: origin.x + random(-12, 12),
+          y: origin.y,
+          px: origin.x,
+          py: origin.y,
+          vx: lean * 0.8,
+          vy: -random(4.2, 5.1),
+          targetY: origin.y - reach,
+          palette,
+        });
+        flashes.push({ x: origin.x, y: origin.y, life: 10, maxLife: 10, radius: 16, color: palette[1] });
+        start();
+      }
+
+      function start() {
+        if (reduceMotion.matches || frame) return;
+        lastTime = 0;
+        frame = requestAnimationFrame(tick);
+      }
+
+      function tick(now: number) {
+        const delta = lastTime ? Math.min((now - lastTime) / 16.667, 2) : 1;
+        lastTime = now;
+
+        context!.clearRect(0, 0, width, height);
+        context!.globalCompositeOperation = "lighter";
+        context!.lineCap = "round";
+
+        for (let i = rockets.length - 1; i >= 0; i -= 1) {
+          const rocket = rockets[i];
+          rocket.px = rocket.x;
+          rocket.py = rocket.y;
+          rocket.vy += 0.052 * delta;
+          rocket.x += rocket.vx * delta;
+          rocket.y += rocket.vy * delta;
+
+          if (Math.random() < 0.9) {
+            const maxLife = random(16, 28);
+            addSpark({
+              x: rocket.x + random(-1.4, 1.4),
+              y: rocket.y + random(0, 4),
+              vx: random(-0.2, 0.2),
+              vy: random(0.15, 0.7),
+              life: maxLife,
+              maxLife,
+              size: random(0.9, 1.7),
+              color: rocket.palette[Math.random() < 0.5 ? 0 : 2],
+              gravity: 0.012,
+              drag: 0.97,
+            });
+          }
+
+          context!.globalAlpha = 0.55;
+          context!.strokeStyle = hsl(rocket.palette[0]);
+          context!.lineWidth = 1.2;
+          context!.beginPath();
+          context!.moveTo(rocket.px, rocket.py);
+          context!.lineTo(rocket.x, rocket.y);
+          context!.stroke();
+
+          const head = context!.createRadialGradient(rocket.x, rocket.y, 0, rocket.x, rocket.y, 11);
+          head.addColorStop(0, hsl(rocket.palette[2], 0.95));
+          head.addColorStop(0.45, hsl(rocket.palette[0], 0.5));
+          head.addColorStop(1, hsl(rocket.palette[0], 0));
+          context!.globalAlpha = 1;
+          context!.fillStyle = head;
+          context!.beginPath();
+          context!.arc(rocket.x, rocket.y, 11, 0, Math.PI * 2);
+          context!.fill();
+
+          if (rocket.y <= rocket.targetY || rocket.vy >= -0.55) {
+            explode(rocket.x, rocket.y, rocket.palette);
+            rockets.splice(i, 1);
+          }
+        }
+
+        for (let i = sparks.length - 1; i >= 0; i -= 1) {
+          const spark = sparks[i];
+          spark.life -= delta;
+
+          if (spark.life <= 0) {
+            sparks.splice(i, 1);
+            continue;
+          }
+
+          spark.vx *= Math.pow(spark.drag, delta);
+          spark.vy = spark.vy * Math.pow(spark.drag, delta) + spark.gravity * delta;
+          spark.x += spark.vx * delta;
+          spark.y += spark.vy * delta;
+
+          const fade = Math.min(1, spark.life / spark.maxLife);
+          context!.globalAlpha = Math.min(1, fade * 1.15) * 0.95;
+          context!.strokeStyle = hsl(spark.color);
+          context!.fillStyle = hsl(spark.color);
+          context!.lineWidth = spark.size;
+          context!.beginPath();
+          context!.moveTo(spark.x - spark.vx * 2.2, spark.y - spark.vy * 2.2);
+          context!.lineTo(spark.x, spark.y);
+          context!.stroke();
+          context!.beginPath();
+          context!.arc(spark.x, spark.y, spark.size * 0.7, 0, Math.PI * 2);
+          context!.fill();
+        }
+
+        for (let i = flashes.length - 1; i >= 0; i -= 1) {
+          const flash = flashes[i];
+          flash.life -= delta;
+
+          if (flash.life <= 0) {
+            flashes.splice(i, 1);
+            continue;
+          }
+
+          const fade = flash.life / flash.maxLife;
+          const radius = flash.radius * (1.25 - fade * 0.25);
+          const glow = context!.createRadialGradient(flash.x, flash.y, 0, flash.x, flash.y, radius);
+          glow.addColorStop(0, hsl(flash.color, fade * 0.5));
+          glow.addColorStop(0.5, hsl(flash.color, fade * 0.16));
+          glow.addColorStop(1, hsl(flash.color, 0));
+          context!.globalAlpha = 1;
+          context!.fillStyle = glow;
+          context!.beginPath();
+          context!.arc(flash.x, flash.y, radius, 0, Math.PI * 2);
+          context!.fill();
+        }
+
+        context!.globalAlpha = 1;
+        context!.globalCompositeOperation = "source-over";
+
+        if (rockets.length || sparks.length || flashes.length) {
+          frame = requestAnimationFrame(tick);
+        } else {
+          frame = 0;
+          lastTime = 0;
+          context!.clearRect(0, 0, width, height);
+        }
+      }
+
+      hero.addEventListener("pointerdown", (event) => {
+        if (event.button !== 0 || reduceMotion.matches || rockets.length >= 5) return;
+
+        const rect = hero.getBoundingClientRect();
+        const origin = launchPoint();
+        const lean = clamp((event.clientX - rect.left - origin.x) / Math.max(rect.width * 0.55, 1), -1, 1);
+        launch(lean);
+      });
+
+      reduceMotion.addEventListener("change", () => {
+        if (!reduceMotion.matches) return;
+
+        rockets.length = 0;
+        sparks.length = 0;
+        flashes.length = 0;
+        if (frame) cancelAnimationFrame(frame);
+        frame = 0;
+        lastTime = 0;
+        context.clearRect(0, 0, width, height);
+      });
+    }
+  }
+</script>
