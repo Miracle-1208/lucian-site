@@ -1,0 +1,58 @@
+---
+import DetailLayout from "../../layouts/DetailLayout.astro";
+import { getLibraryEntry } from "../../data/library";
+
+const entry = getLibraryEntry("notebricks");
+---
+
+<DetailLayout {entry}>
+  <section class="detail-section">
+    <h2>README</h2>
+    <p>
+      积木笔记（NoteBricks）是一套将数学课堂视频整理成可编辑讲义的工具。用户上传带声音的课程视频后，系统会完成语音转写、关键画面提取和板书分析，再由 AI 结合讲解与课堂画面，整理出定义、定理、推导、例题、解答和教学提醒，并使用 Typst 生成排版统一的 PDF 与源文件。
+    </p>
+    <p>
+      项目以完整记录课堂内容为目标，尽量保留老师的讲解思路、解题过程和板书信息。课堂中的数学图形会按结构重绘为可编辑的矢量图，文字、公式和图形都能继续修改与复用。
+    </p>
+  </section>
+
+  <section class="detail-section">
+    <h2>预览</h2>
+    <figure class="project-preview">
+      <a href="https://notebrick.cn/" target="_blank" rel="noreferrer">
+        <img
+          src="/images/projects/notebrick.webp"
+          alt="积木笔记首页截图"
+          width="1600"
+          height="845"
+          loading="lazy"
+        />
+      </a>
+      <figcaption>notebrick.cn · 把课堂，留在纸上。</figcaption>
+    </figure>
+  </section>
+
+  <section class="detail-section">
+    <h2>项目信息</h2>
+    <ul class="meta-list">
+      <li>
+        <strong>角色</strong>
+        <span>创始人之一</span>
+      </li>
+      <li>
+        <strong>类型</strong>
+        <span>教育科技 / 课堂笔记</span>
+      </li>
+      <li>
+        <strong>网站</strong>
+        <span>
+          <a href="https://notebrick.cn/" target="_blank" rel="noreferrer">notebrick.cn ↗</a>
+        </span>
+      </li>
+      <li>
+        <strong>关键词</strong>
+        <span>Typst · 多模态 · 讲义生成</span>
+      </li>
+    </ul>
+  </section>
+</DetailLayout>

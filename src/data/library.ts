@@ -9,6 +9,7 @@ export type LibraryEntry = {
   title: string;
   description: string;
   fileName?: string;
+  footnote?: string;
   resourceHref?: string;
   resourceLabel?: string;
   keywords: string[];
@@ -38,6 +39,54 @@ export const sectionMeta: Record<
 };
 
 export const libraryEntries: LibraryEntry[] = [
+  {
+    id: "notebricks",
+    href: "/projects/notebricks/",
+    section: "projects",
+    sectionLabel: "Projects",
+    tag: "Co-founder",
+    title: "积木笔记",
+    description: "把数学课堂视频整理成可编辑讲义的工具。",
+    footnote: "notebrick.cn",
+    resourceHref: "https://notebrick.cn/",
+    resourceLabel: "访问 notebrick.cn",
+    keywords: [
+      "积木笔记",
+      "NoteBricks",
+      "NoteBrick",
+      "课堂视频",
+      "讲义",
+      "Typst",
+      "AI",
+      "教育科技",
+      "创始人",
+    ],
+    transitionName: "folio-notebricks",
+  },
+  {
+    id: "plib",
+    href: "/projects/plib/",
+    section: "projects",
+    sectionLabel: "Projects",
+    tag: "Co-founder",
+    title: "Plib",
+    description: "由北大学生自主开发的学习资源共享网站。",
+    footnote: "e.pkuhub.cn · i.pkuhub.cn",
+    resourceHref: "https://e.pkuhub.cn/",
+    resourceLabel: "访问 Plib",
+    keywords: [
+      "Plib",
+      "pkuhub",
+      "学习资源",
+      "资料共享",
+      "往年题",
+      "笔记",
+      "北大",
+      "校园社区",
+      "创始人",
+    ],
+    transitionName: "folio-plib",
+  },
   {
     id: "ode-solutions",
     href: "/courses/ode-solutions/",

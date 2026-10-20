@@ -1,0 +1,70 @@
+---
+import DetailLayout from "../../layouts/DetailLayout.astro";
+import { getLibraryEntry } from "../../data/library";
+
+const entry = getLibraryEntry("plib");
+---
+
+<DetailLayout {entry}>
+  <section class="detail-section">
+    <h2>README</h2>
+    <p>
+      Plib 是一个由北大学生自主开发的学习资源共享网站，旨在促进校内知识流通，提高学习效率。平台汇集了各院系、各课程的往年试题、学习笔记等，方便同学们查阅和分享。
+    </p>
+    <p>
+      平台秉持“知识共享、互助共进”的理念，鼓励同学们在合法合规的前提下，分享自己的学习资料，同时充分尊重知识产权，共同构建良好的学习生态。
+    </p>
+    <p>
+      Plib 为非官方网站，与北京大学官方机构没有关联。
+    </p>
+    <p>
+      我们相信，真正有价值的资源，不应只封存在某处，而应该在被需要时被找到、被使用、被传递。
+    </p>
+  </section>
+
+  <section class="detail-section">
+    <h2>预览</h2>
+    <figure class="project-preview">
+      <a href="https://e.pkuhub.cn/" target="_blank" rel="noreferrer">
+        <img
+          src="/images/projects/plib.webp"
+          alt="Plib 首页截图"
+          width="1600"
+          height="960"
+          loading="lazy"
+        />
+      </a>
+      <figcaption>e.pkuhub.cn · 笔记与资料共享。</figcaption>
+    </figure>
+  </section>
+
+  <section class="detail-section">
+    <h2>项目信息</h2>
+    <ul class="meta-list">
+      <li>
+        <strong>角色</strong>
+        <span>创始人之一</span>
+      </li>
+      <li>
+        <strong>类型</strong>
+        <span>校园社区 / 学习资源共享</span>
+      </li>
+      <li>
+        <strong>校外</strong>
+        <span>
+          <a href="https://e.pkuhub.cn/" target="_blank" rel="noreferrer">e.pkuhub.cn ↗</a>
+        </span>
+      </li>
+      <li>
+        <strong>校内</strong>
+        <span>
+          <a href="https://i.pkuhub.cn/" target="_blank" rel="noreferrer">i.pkuhub.cn ↗</a>
+        </span>
+      </li>
+      <li>
+        <strong>说明</strong>
+        <span>非官方网站，与北京大学官方机构无关联</span>
+      </li>
+    </ul>
+  </section>
+</DetailLayout>

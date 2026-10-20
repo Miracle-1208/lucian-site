@@ -38,7 +38,7 @@ const meta = sectionMeta[section];
           <span class="folio-tag">{entry.tag}</span>
           <strong>{entry.title}</strong>
           <span class="folio-description">{entry.description}</span>
-          <span class="folio-file">{entry.fileName ? `文件 · ${entry.fileName}` : "查看条目"}</span>
+          <span class="folio-file">{entry.fileName ? `文件 · ${entry.fileName}` : entry.footnote ?? "查看条目"}</span>
           <span class="folio-open" aria-hidden="true">翻开这一页 <b>↗</b></span>
         </a>
       ))}
